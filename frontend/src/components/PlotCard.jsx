@@ -1,7 +1,7 @@
 import { StatusBadge } from './StatusBadge.jsx';
 import { ecMs, relativeTime, value, waterCm } from '../utils/format.js';
 
-export function PlotCard({ plot, selected, activeMetric, onSelect }) {
+export function PlotCard({ plot, selected, onSelect }) {
   const metrics = plot.metrics || {};
   const primaryLabel = plot.sensorMode === 'water_soil' ? '水位' : '张力';
   const primaryValue = plot.sensorMode === 'water_soil' ? waterCm(metrics.waterLevelMm) : value(metrics.soilTensionKpa, 1, ' kPa');
@@ -13,7 +13,7 @@ export function PlotCard({ plot, selected, activeMetric, onSelect }) {
   return (
     <button
       type="button"
-      className={`plot-card state-${plot.status} ${selected ? 'is-selected' : ''} metric-${activeMetric}`}
+      className={`plot-card state-${plot.status} ${selected ? 'is-selected' : ''}`}
       onClick={() => onSelect(plot.plotCode)}
       aria-pressed={selected}
     >

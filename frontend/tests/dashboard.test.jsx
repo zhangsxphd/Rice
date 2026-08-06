@@ -26,7 +26,7 @@ function plots() {
 
 describe('实时监测页面组件', () => {
   it('按4×6映射显示24个正式小区', () => {
-    render(<PlotMatrix plots={plots()} selectedPlotCode="P01" activeMetric="overview" onSelect={() => {}} />);
+    render(<PlotMatrix plots={plots()} selectedPlotCode="P01" onSelect={() => {}} />);
     expect(screen.getAllByRole('button')).toHaveLength(24);
     expect(screen.getByText('B1-W0-V1')).toBeInTheDocument();
     expect(screen.getByText('B4-W2-V2')).toBeInTheDocument();
@@ -34,7 +34,7 @@ describe('实时监测页面组件', () => {
   });
 
   it('W0显示水位，W1/W2显示张力且状态样式不同', () => {
-    render(<PlotMatrix plots={plots()} selectedPlotCode="P01" activeMetric="primary" onSelect={() => {}} />);
+    render(<PlotMatrix plots={plots()} selectedPlotCode="P01" onSelect={() => {}} />);
     const p01 = screen.getByText('P01').closest('button');
     const p03 = screen.getByText('P03').closest('button');
     expect(p01).toHaveTextContent('水位');

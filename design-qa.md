@@ -3,7 +3,7 @@
 ## 对照基准
 
 - source visual truth path: `/Users/zhangshuxuan/Downloads/rice_dashboard_reference.png`
-- implementation screenshot path: `/Users/zhangshuxuan/Documents/Rice/artifacts/dashboard-final-viewport.png`
+- implementation screenshot path: `/Users/zhangshuxuan/Documents/Rice/artifacts/dashboard-no-metric-strip.png`
 - focused source region: `/Users/zhangshuxuan/Documents/Rice/artifacts/reference-card-region.png`
 - focused implementation region: `/Users/zhangshuxuan/Documents/Rice/artifacts/implementation-card-region.png`
 - viewport: 1672 × 941 CSS px
@@ -50,6 +50,13 @@
 - P11 缺失张力显示 `—`，状态仍为“缺测”。
 - 摘要迷你趋势恢复为按时间变化的连续曲线，不再出现由小区顺序导致的假锯齿。
 - 1672 px 和 1440 px 均无水平溢出；核心路由和交互可用；浏览器页面控制台错误为 0。
+
+### User-directed refinement — passed
+
+- 按用户提供的局部截图，删除矩阵上方的“综合状态 / 水位/张力 / 含水率 / 温度 / EC / pH”标签条和右侧状态图例。
+- 同时移除对应的 `activeMetric` 状态、组件参数和高亮样式，避免留下不可达交互代码。
+- 更新后矩阵自然上移 40 px，24 个小区、选中态、状态徽标和历史联动保持正常；1672 × 941 下无水平溢出，浏览器控制台错误为 0。
+- evidence: `/Users/zhangshuxuan/Documents/Rice/artifacts/dashboard-no-metric-strip.png`
 
 ## 验证的交互
 

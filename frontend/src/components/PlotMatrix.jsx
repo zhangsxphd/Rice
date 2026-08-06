@@ -5,7 +5,7 @@ const COLUMNS = [
   ['W0', 'V1'], ['W0', 'V2'], ['W1', 'V1'], ['W1', 'V2'], ['W2', 'V1'], ['W2', 'V2']
 ];
 
-export function PlotMatrix({ plots, selectedPlotCode, activeMetric, onSelect }) {
+export function PlotMatrix({ plots, selectedPlotCode, onSelect }) {
   return (
     <div className="matrix-scroll">
       <div className="plot-matrix" data-testid="plot-matrix">
@@ -18,7 +18,7 @@ export function PlotMatrix({ plots, selectedPlotCode, activeMetric, onSelect }) 
             <div className="block-header"><b>{block}</b><span>区组 {block.slice(1)}</span></div>
             {COLUMNS.map(([water, variety]) => {
               const plot = plots.find((item) => item.blockCode === block && item.waterTreatment === water && item.varietyCode === variety);
-              return plot ? <PlotCard key={plot.plotCode} plot={plot} selected={plot.plotCode === selectedPlotCode} activeMetric={activeMetric} onSelect={onSelect} /> : <div key={`${block}-${water}-${variety}`} />;
+              return plot ? <PlotCard key={plot.plotCode} plot={plot} selected={plot.plotCode === selectedPlotCode} onSelect={onSelect} /> : <div key={`${block}-${water}-${variety}`} />;
             })}
           </div>
         ))}

@@ -8,15 +8,10 @@ import { HistoryPanel } from '../components/HistoryPanel.jsx';
 import { LatestReadingsTable } from '../components/LatestReadingsTable.jsx';
 import { localTime } from '../utils/format.js';
 
-const METRIC_TABS = [
-  ['overview', '综合状态'], ['primary', '水位/张力'], ['moisture', '含水率'], ['temperature', '温度'], ['ec', 'EC'], ['ph', 'pH']
-];
-
 export function DashboardPage() {
   const [overview, setOverview] = useState(null);
   const [trends, setTrends] = useState([]);
   const [selectedPlotCode, setSelectedPlotCode] = useState('P01');
-  const [activeMetric, setActiveMetric] = useState('overview');
   const [range, setRange] = useState('1h');
   const [history, setHistory] = useState([]);
   const [recent, setRecent] = useState([]);
@@ -63,9 +58,7 @@ export function DashboardPage() {
         <>
           <section className="summary-grid">{summaryCards.map((card) => <SummaryMetricCard key={card.title} {...card} points={trends} />)}</section>
           <section className="matrix-panel">
-            <div className="metric-tabs" role="tablist">{METRIC_TABS.map(([key, label]) => <button role="tab" aria-selected={activeMetric === key} className={activeMetric === key ? 'is-active' : ''} key={key} onClick={() => setActiveMetric(key)}>{label}</button>)}</div>
-            <div className="status-legend"><span className="legend-normal"><i />正常</span><span className="legend-abnormal"><i />异常</span><span className="legend-missing"><i />缺测</span><span className="legend-offline"><i />离线</span><span className="legend-unbound"><i />未绑定</span></div>
-            <PlotMatrix plots={overview.plots} selectedPlotCode={selectedPlot?.plotCode} activeMetric={activeMetric} onSelect={setSelectedPlotCode} />
+            <PlotMatrix plots={overview.plots} selectedPlotCode={selectedPlot?.plotCode} onSelect={setSelectedPlotCode} />
           </section>
           <HistoryPanel plot={selectedPlot} points={history} range={range} onRange={setRange} />
           <LatestReadingsTable plot={selectedPlot} rows={recent} />

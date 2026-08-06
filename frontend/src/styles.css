@@ -45,7 +45,7 @@ a { color: inherit; text-decoration: none; }
 .icon-button { border: 0; background: transparent; width: 34px; height: 34px; display: grid; place-items: center; cursor: pointer; border-radius: 7px; }
 .icon-button:hover { background: #eef2f7; }
 .toolbar-stat { height: 32px; padding: 0 12px; border-radius: 7px; display: flex; align-items: center; gap: 6px; font-size: 12px; white-space: nowrap; }
-.toolbar-stat i, .status-legend i, .status-badge i { width: 7px; height: 7px; border-radius: 50%; background: currentColor; }
+.toolbar-stat i, .status-badge i { width: 7px; height: 7px; border-radius: 50%; background: currentColor; }
 .toolbar-stat b { font-size: 13px; }
 .toolbar-stat.online { color: #079963; background: #f0faf6; }
 .toolbar-stat.abnormal { color: #e7660b; background: #fff8f1; }
@@ -69,13 +69,7 @@ a { color: inherit; text-decoration: none; }
 .spark-empty { height: 48px; display: grid; place-items: center; font-size: 10px; color: #9aa7b9; }
 
 .matrix-panel { margin: 0 10px; background: #fff; border: 1px solid var(--border); border-radius: 10px; overflow: hidden; }
-.metric-tabs { height: 40px; display: flex; align-items: stretch; gap: 22px; padding: 0 14px; border-bottom: 1px solid #e3e9f1; }
-.metric-tabs button { border: 0; border-bottom: 2px solid transparent; background: transparent; color: #5d6d86; font-weight: 650; padding: 0 3px; cursor: pointer; }
-.metric-tabs button:hover, .metric-tabs button.is-active { color: #079963; border-bottom-color: #0aa56e; }
-.status-legend { height: 0; position: relative; z-index: 2; top: -27px; float: right; display: flex; gap: 18px; padding-right: 16px; color: #46556d; font-size: 10px; }
-.status-legend span { display: flex; align-items: center; gap: 5px; }
-.legend-normal i { color: var(--green); }.legend-abnormal i { color: var(--orange); }.legend-missing i { color: var(--red); }.legend-offline i { color: #7c8798; }.legend-unbound i { color: #b0b8c5; }
-.matrix-scroll { overflow-x: auto; clear: both; }
+.matrix-scroll { overflow-x: auto; }
 .plot-matrix { min-width: 1100px; display: grid; grid-template-columns: 104px repeat(6, minmax(150px, 1fr)); gap: 6px; padding: 8px; }
 .matrix-corner, .water-header, .variety-header, .block-header { display: flex; align-items: center; justify-content: center; }
 .matrix-corner { background: #f4f7fa; border-radius: 7px; color: #627088; font-weight: 700; }
@@ -99,7 +93,6 @@ a { color: inherit; text-decoration: none; }
 .plot-values { display: grid; gap: 3px; }
 .plot-values > div { display: grid; grid-template-columns: 27px 1fr 28px 1fr; align-items: center; gap: 3px; font-size: 8px; }
 .plot-values span { color: #637289; }.plot-values b { color: #40506a; font-size: 9px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-.metric-primary .plot-values > div:first-child b:nth-of-type(1), .metric-moisture .plot-values > div:first-child b:nth-of-type(2), .metric-temperature .plot-values > div:nth-child(2) b:nth-of-type(1), .metric-ec .plot-values > div:nth-child(2) b:nth-of-type(2), .metric-ph .plot-values > div:nth-child(3) b:nth-of-type(1) { color: #1769ff; font-size: 11px; }
 
 .history-panel { margin: 7px 10px 0; }
 .history-toolbar { min-height: 36px; padding: 0 12px; border-radius: 8px 8px 0 0; background: #fff; border: 1px solid var(--border); display: flex; align-items: center; gap: 18px; }
@@ -172,6 +165,6 @@ textarea { resize: vertical; line-height: 1.55; }.field-note { color: #6c7a90; m
 @media (max-width: 700px) {
   .app-shell { padding: 0; }.top-toolbar { border-radius: 0; }.toolbar-left { width: 100%; overflow-x: auto; }.toolbar-button { padding: 0 10px; }
   .summary-grid { grid-template-columns: 1fr 1fr; padding: 7px; }.matrix-panel, .history-panel, .latest-panel { margin-left: 7px; margin-right: 7px; }
-  .metric-tabs { overflow-x: auto; gap: 16px; }.status-legend { display: none; }.history-toolbar { align-items: flex-start; flex-wrap: wrap; padding: 8px; }.range-tabs { width: 100%; overflow-x: auto; }.refresh-hint { display: none; }
+  .history-toolbar { align-items: flex-start; flex-wrap: wrap; padding: 8px; }.range-tabs { width: 100%; overflow-x: auto; }.refresh-hint { display: none; }
   .history-grid { grid-template-columns: 1fr; }.page-heading { align-items: flex-start; flex-direction: column; }.export-summary { grid-template-columns: 1fr; padding: 0 10px; }.data-card { margin: 8px 10px; }.filter-grid, .form-grid, .threshold-grid { grid-template-columns: 1fr; }.maintenance-grid { grid-template-columns: 1fr 1fr; }
 }
