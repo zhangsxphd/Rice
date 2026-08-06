@@ -34,7 +34,19 @@ npm run dev:frontend -- --host 0.0.0.0 --port 5173
 
 浏览器打开 `http://127.0.0.1:5173/`。Vite会把 `/api`、`/health`和`/ready`转发到3201。
 
-手动关闭时，在上面两个终端分别按 `Control-C`。如采用生产模式的PM2，则使用：
+手动关闭时，在上面两个终端分别按 `Control-C`。
+
+如果希望后台运行并用一条命令启停，使用：
+
+```bash
+cd /Users/zhangshuxuan/Documents/Rice
+npm run local:start
+npm run local:stop
+```
+
+本地日志写入 `logs/backend-local.log` 和 `logs/frontend-local.log`。启动脚本只在3201和5173端口空闲时运行；关闭脚本会校验PID和进程工作目录，避免停止其他项目。
+
+如采用生产模式的PM2，则使用：
 
 ```bash
 cd /opt/rice

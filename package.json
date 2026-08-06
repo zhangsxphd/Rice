@@ -8,6 +8,8 @@
     "frontend"
   ],
   "scripts": {
+    "local:start": "bash scripts/start-local.sh",
+    "local:stop": "bash scripts/stop-local.sh",
     "dev:backend": "npm run dev --workspace backend",
     "dev:frontend": "npm run dev --workspace frontend --",
     "start:backend": "npm run start --workspace backend",
