@@ -9,6 +9,13 @@ NGINX_FILE='/etc/nginx/conf.d/rice.conf'
 log() { printf '[rice-deploy] %s\n' "$*"; }
 die() { printf '[rice-deploy] ERROR: %s\n' "$*" >&2; exit 1; }
 need() { command -v "$1" >/dev/null 2>&1 || die "缺少命令: $1"; }
+run_low_priority() {
+  if command -v ionice >/dev/null 2>&1; then
+    nice -n 10 ionice -c 3 "$@"
+  else
+    nice -n 10 "$@"
+  fi
+}
 
 [[ "$(realpath "$PWD")" == "$APP_ROOT" ]] || die "必须从 $APP_ROOT 运行，本次目录为 $(realpath "$PWD")"
 for command_name in node npm pm2 curl; do need "$command_name"; done
@@ -34,10 +41,10 @@ fi
 
 mkdir -p /opt/rice/data /opt/rice/logs /opt/rice/backups
 log '安装依赖并运行测试'
-npm ci --include=dev --no-audit --no-fund
-NODE_ENV=test npm run test
+run_low_priority npm ci --include=dev --no-audit --no-fund
+run_low_priority env NODE_ENV=test npm run test
 log '构建前端并初始化数据库'
-npm run build:frontend
+run_low_priority npm run build:frontend
 node --env-file=/opt/rice/.env backend/src/db/init-cli.js
 
 log '启动或重载独立PM2进程 rice-backend'

@@ -20,7 +20,8 @@
     "test:lua": "node scripts/validate-lua.mjs",
     "test": "npm run test:backend && npm run test:frontend && npm run test:lua",
     "db:init": "npm run db:init --workspace backend",
-    "db:demo": "npm run db:demo --workspace backend"
+    "db:demo": "npm run db:demo --workspace backend",
+    "export:analysis": "npm run export:analysis --workspace backend --"
   },
   "devDependencies": {
     "eslint": "^10.8.0",

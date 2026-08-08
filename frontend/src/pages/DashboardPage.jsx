@@ -52,7 +52,7 @@ export function DashboardPage() {
 
   return (
     <main className="app-shell dashboard-page">
-      <TopToolbar counts={overview?.counts} generatedAt={localTime(overview?.generatedAt, true)} refreshSeconds={overview?.settings?.dashboard?.refreshSeconds || 10} onExport={() => { window.location.href = '/api/exports/readings.csv'; }} />
+      <TopToolbar counts={overview?.counts} generatedAt={localTime(overview?.generatedAt, true)} refreshSeconds={overview?.settings?.dashboard?.refreshSeconds || 10} selectedPlotCode={selectedPlot?.plotCode || selectedPlotCode} />
       {error ? <div className="error-banner">{error}<button onClick={loadOverview}>重试</button></div> : null}
       {!overview ? <div className="page-loading">正在读取水稻试验实时数据…</div> : (
         <>

@@ -12,3 +12,4 @@ frontend/.env.local
 coverage/
 .DS_Store
 *.log
+outputs/*.xlsx

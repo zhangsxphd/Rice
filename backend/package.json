@@ -9,13 +9,16 @@
     "test": "node --test --test-concurrency=1 tests/*.test.js",
     "db:init": "node src/db/init-cli.js",
     "db:demo": "node src/db/demo-cli.js",
-    "backup": "node src/db/backup-cli.js"
+    "backup": "node src/db/backup-cli.js",
+    "export:analysis": "node src/db/export-analysis-cli.js"
   },
   "dependencies": {
     "@fastify/cors": "^11.3.0",
     "@fastify/rate-limit": "^11.2.0",
     "@fastify/static": "^10.1.2",
     "better-sqlite3": "^13.0.3",
-    "fastify": "^5.11.2"
+    "fastify": "^5.11.2",
+    "jszip": "^3.10.1",
+    "xlsx-populate": "^1.21.0"
   }
 }

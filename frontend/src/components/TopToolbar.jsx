@@ -1,7 +1,7 @@
 import { Link, useLocation } from 'react-router-dom';
-import { GearSix, DownloadSimple, Cpu, Plant, ClockCounterClockwise } from '@phosphor-icons/react';
+import { GearSix, DownloadSimple, Cpu, Plant, ClockCounterClockwise, CaretDown } from '@phosphor-icons/react';
 
-export function TopToolbar({ counts, generatedAt, refreshSeconds = 10, onExport }) {
+export function TopToolbar({ counts, generatedAt, refreshSeconds = 10, selectedPlotCode = 'P01' }) {
   const location = useLocation();
   const active = (path) => location.pathname === path ? 'is-active' : '';
   return (
@@ -19,7 +19,15 @@ export function TopToolbar({ counts, generatedAt, refreshSeconds = 10, onExport 
           <span className="toolbar-stat missing"><i />缺测 <b>{counts.missing}</b></span>
           <span className="last-update">最后更新 <b>{generatedAt || '—'}</b></span>
           <span className="auto-refresh"><ClockCounterClockwise />自动刷新 <b>{refreshSeconds}秒</b></span>
-          <button className="primary-button" onClick={onExport}><DownloadSimple weight="bold" />导出全部CSV</button>
+          <details className="export-menu">
+            <summary className="primary-button"><DownloadSimple weight="bold" />导出数据<CaretDown /></summary>
+            <div className="export-menu-panel">
+              <a href="/api/export/analysis.xlsx"><b>导出科研分析Excel</b><small>宽表、处理统计、质量检查与原始长表</small></a>
+              <a href="/api/export/raw.csv"><b>导出原始数据CSV</b><small>数据库逐条长表</small></a>
+              <a href="/api/export/treatment-statistics.csv"><b>导出处理统计CSV</b><small>按采集时间、W处理和品种统计</small></a>
+              <a href={`/api/export/plots/${selectedPlotCode}.csv`}><b>导出当前小区CSV</b><small>{selectedPlotCode} 的全部原始记录</small></a>
+            </div>
+          </details>
         </div>
       ) : <Link className="back-dashboard" to="/">返回实时监测</Link>}
     </header>

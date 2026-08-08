@@ -12,12 +12,12 @@ export function ExportPage() {
   useEffect(() => { load(); }, []);
   const exportUrl = () => {
     const params = new URLSearchParams(Object.entries(filters).filter(([, value]) => value));
-    return `/api/exports/readings.csv${params.size ? `?${params}` : ''}`;
+    return `/api/export/raw.csv${params.size ? `?${params}` : ''}`;
   };
   const field = (label, key, children) => <label><span>{label}</span>{children || <input type="date" value={filters[key]} onChange={(event) => setFilters({ ...filters, [key]: event.target.value })} />}</label>;
   return (
     <main className="app-shell subpage"><TopToolbar />
-      <section className="page-heading"><div><span>数据导出</span><h1>试验数据归档与备份</h1><p>CSV使用UTF-8 BOM，所有筛选均保留数据库原始单位。</p></div><a className="primary-button" href="/api/exports/readings.csv"><DownloadSimple />导出全部小区</a></section>
+      <section className="page-heading"><div><span>数据导出</span><h1>试验数据归档与科研分析</h1><p>默认导出科研分析Excel；原始CSV继续保留数据库长表与原始单位。</p></div><a className="primary-button" href="/api/export/analysis.xlsx"><DownloadSimple />导出科研分析Excel</a></section>
       {message ? <div className="error-banner">{message}</div> : null}
       <section className="export-summary"><article><Database /><span>读数总量</span><b>{status.readings.toLocaleString()}</b></article><article><Archive /><span>数据库大小</span><b>{(status.sizeBytes / 1024 / 1024).toFixed(2)} MB</b></article><article><DownloadSimple /><span>最近备份</span><b>{status.backups[0] ? localTime(status.backups[0].createdAt, true) : '暂无'}</b></article></section>
       <section className="data-card filter-card"><div className="card-heading"><Funnel /><div><h2>按条件导出</h2><p>日期按Asia/Shanghai选择，导出列包含小区设计、设备、传感器状态和脱敏原始JSON。</p></div></div><div className="filter-grid">

@@ -7,7 +7,7 @@ module.exports = {
     instances: 1,
     exec_mode: 'fork',
     autorestart: true,
-    max_memory_restart: '450M',
+    max_memory_restart: '256M',
     time: true,
     out_file: '/opt/rice/logs/backend-out.log',
     error_file: '/opt/rice/logs/backend-error.log',

@@ -2,6 +2,7 @@ const FORMULA_PREFIX = /^[=+\-@]/;
 
 function safeCell(value) {
   if (value === null || value === undefined) return '';
+  if (typeof value === 'number') return Number.isFinite(value) ? String(value) : '';
   let text = typeof value === 'object' ? JSON.stringify(value) : String(value);
   if (FORMULA_PREFIX.test(text)) text = `'${text}`;
   return /[",\r\n]/.test(text) ? `"${text.replaceAll('"', '""')}"` : text;
@@ -14,6 +15,6 @@ export const EXPORT_COLUMNS = [
   'soil_status', 'cycle_status', 'payload_status', 'raw_json'
 ];
 
-export function rowsToCsv(rows) {
-  return `\uFEFF${EXPORT_COLUMNS.join(',')}\r\n${rows.map((row) => EXPORT_COLUMNS.map((column) => safeCell(row[column])).join(',')).join('\r\n')}\r\n`;
+export function rowsToCsv(rows, columns = EXPORT_COLUMNS) {
+  return `\uFEFF${columns.join(',')}\r\n${rows.map((row) => columns.map((column) => safeCell(row[column])).join(',')).join('\r\n')}\r\n`;
 }

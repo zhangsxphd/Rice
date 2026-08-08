@@ -37,7 +37,7 @@ export async function buildApp(overrides = {}) {
   await app.register(plotsRoutes, { prefix: '/api/plots', database });
   await app.register(devicesRoutes, { prefix: '/api', database });
   await app.register(settingsRoutes, { prefix: '/api/settings', database, backupDir: runtime.backupDir, databasePath: runtime.databasePath });
-  await app.register(exportsRoutes, { prefix: '/api/exports', database });
+  await app.register(exportsRoutes, { prefix: '/api', database });
 
   app.setErrorHandler((error, request, reply) => {
     if (runtime.nodeEnv !== 'test') request.log.error(error);
