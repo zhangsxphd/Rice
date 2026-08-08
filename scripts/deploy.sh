@@ -35,7 +35,7 @@ fi
 mkdir -p /opt/rice/data /opt/rice/logs /opt/rice/backups
 log '安装依赖并运行测试'
 npm ci --include=dev --no-audit --no-fund
-npm run test
+NODE_ENV=test npm run test
 log '构建前端并初始化数据库'
 npm run build:frontend
 node --env-file=/opt/rice/.env backend/src/db/init-cli.js
