@@ -28,6 +28,23 @@ export async function buildApp(overrides = {}) {
     bodyLimit: runtime.maxIngestBodyBytes
   });
   app.decorate('database', database);
+  // D100L 的 HTTP 通道会发送 JSON 正文，但不会附带 Content-Type。
+  // Fastify 默认会在路由前以 415 拒绝该请求；仅为未声明类型的请求补充 JSON 解析。
+  app.addContentTypeParser('*', { parseAs: 'string' }, (request, body, done) => {
+    if (request.headers['content-type']) {
+      const error = new Error('Unsupported Media Type');
+      error.statusCode = 415;
+      done(error);
+      return;
+    }
+    try {
+      done(null, JSON.parse(body));
+    } catch {
+      const error = new Error('请求正文不是合法JSON');
+      error.statusCode = 400;
+      done(error);
+    }
+  });
   await app.register(cors, { origin: runtime.corsOrigin === '*' ? true : runtime.corsOrigin, credentials: true });
   await app.register(rateLimit, { global: false });
   registerAdminAuth(app, { mode: runtime.adminAuthMode, username: runtime.adminUsername, passwordHash: runtime.adminPasswordHash });

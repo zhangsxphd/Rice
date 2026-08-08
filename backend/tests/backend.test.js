@@ -44,6 +44,14 @@ async function ingest(payload, key = apiKey) {
   return app.inject({ method: 'POST', url: '/api/device-ingest/d100l2', headers: { 'x-api-key': key }, payload });
 }
 
+async function ingestWithoutContentType(payload, key = apiKey) {
+  return app.inject({
+    method: 'POST',
+    url: `/api/device-ingest/d100l2?api_key=${encodeURIComponent(key)}`,
+    payload: JSON.stringify(payload)
+  });
+}
+
 before(async () => {
   database = openDatabase(databasePath);
   app = await buildApp({ database, databasePath, backupDir, nodeEnv: 'test', adminAuthMode: 'none', corsOrigin: '*', maxIngestBodyBytes: 16384 });
@@ -91,6 +99,13 @@ test('已登记未绑定IMEI返回404', async () => {
   const response = await ingest(w0Payload('862323089930799', Math.floor(Date.now() / 1000)));
   assert.equal(response.statusCode, 404);
   assert.equal(response.json().error.code, 'DEVICE_NOT_BOUND');
+});
+
+test('D100L无Content-Type的JSON正文仍可鉴权并入库', async () => {
+  const timestamp = Math.floor(Date.now() / 1000) - 5;
+  const response = await ingestWithoutContentType(w1Payload('862323089930703', timestamp));
+  assert.equal(response.statusCode, 200, response.body);
+  assert.equal(response.json().data.inserted, true);
 });
 
 test('缺测值不写成0且旧读数不覆盖latest', async () => {
