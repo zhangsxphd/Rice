@@ -17,8 +17,8 @@ resolved="$(realpath "$APP_ROOT")"
 [[ "$resolved" == '/opt/rice' ]] || { printf '目标目录校验失败: %s\n' "$resolved" >&2; exit 1; }
 [[ -d "$APP_ROOT/.git" ]] || { printf '/opt/rice不是Git仓库，拒绝删除\n' >&2; exit 1; }
 [[ -z "$(git -C "$APP_ROOT" status --porcelain)" ]] || { printf '存在未提交改动，拒绝删除\n' >&2; exit 1; }
-branch="$(git -C "$APP_ROOT" branch --show-current)"
-git -C "$APP_ROOT" ls-remote --exit-code --heads origin "$branch" >/dev/null || { printf '当前分支未在GitHub找到，拒绝删除\n' >&2; exit 1; }
+head_commit="$(git -C "$APP_ROOT" rev-parse --short HEAD)"
+printf '即将删除 /opt/rice，当前部署提交为 %s；请确认代码已推送GitHub。\n' "$head_commit"
 
 printf '停止rice-backend\n'
 pm2 delete rice-backend || true

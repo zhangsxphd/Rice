@@ -4,7 +4,7 @@
 
 - Node.js 20+、npm、PM2已安装。
 - `127.0.0.1:3201`未被其他服务占用。
-- GitHub仓库克隆到 `/opt/rice`。
+- GitHub仓库代码同步到 `/opt/rice`。
 - 默认部署为IP直连模式：`http://106.14.8.100:3201`，不写Nginx配置。
 - 如以后改用域名，需安装Nginx，将 `RICE_SKIP_NGINX=false`，并填写DNS和TLS证书路径；没有证书时脚本生成HTTP-only配置。
 
