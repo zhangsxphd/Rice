@@ -3,6 +3,7 @@ import { MemoryRouter } from 'react-router-dom';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import { PlotMatrix } from '../src/components/PlotMatrix.jsx';
 import { HistoryPanel } from '../src/components/HistoryPanel.jsx';
+import { LatestReadingsTable } from '../src/components/LatestReadingsTable.jsx';
 import { TopToolbar } from '../src/components/TopToolbar.jsx';
 
 afterEach(cleanup);
@@ -59,5 +60,12 @@ describe('实时监测页面组件', () => {
     expect(links[1]).toHaveAttribute('href', '/settings');
     expect(links[2]).toHaveTextContent('数据导出');
     expect(links[3]).toHaveTextContent('设备管理');
+  });
+
+  it('最新数据表保留移动端横向滚动容器和提示', () => {
+    render(<LatestReadingsTable plot={plots()[0]} rows={[]} />);
+    expect(screen.getByText('左右滑动查看全部指标')).toBeInTheDocument();
+    expect(document.querySelector('.table-scroll')).toContainElement(document.querySelector('.latest-readings-table'));
+    expect(document.querySelector('.latest-readings-table')).toHaveTextContent('水位 (cm)');
   });
 });
