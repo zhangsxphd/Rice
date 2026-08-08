@@ -59,6 +59,8 @@ if [[ "$RICE_SKIP_NGINX" == 'true' ]]; then
   die 'rice-backend未在预期时间内就绪'
 fi
 need nginx
+need sudo
+sudo -n true || die '需要免交互sudo权限以安装Rice Nginx配置'
 
 RICE_DOMAIN="${RICE_DOMAIN:-rice.lansensecloud.cn}"
 RICE_SSL_CERT="${RICE_SSL_CERT:-}"
@@ -88,9 +90,9 @@ else
 fi
 
 log '安装独立Nginx配置并验证，不读取或改写LanSense配置'
-install -m 0644 "$tmp_nginx" "$NGINX_FILE"
-nginx -t
-if command -v systemctl >/dev/null 2>&1; then systemctl reload nginx; else nginx -s reload; fi
+sudo install -m 0644 "$tmp_nginx" "$NGINX_FILE"
+sudo nginx -t
+if command -v systemctl >/dev/null 2>&1; then sudo systemctl reload nginx; else sudo nginx -s reload; fi
 
 for _ in {1..20}; do
   if curl -fsS http://127.0.0.1:3201/ready >/dev/null; then
