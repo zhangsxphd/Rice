@@ -11,7 +11,7 @@ die() { printf '[rice-deploy] ERROR: %s\n' "$*" >&2; exit 1; }
 need() { command -v "$1" >/dev/null 2>&1 || die "缺少命令: $1"; }
 
 [[ "$(realpath "$PWD")" == "$APP_ROOT" ]] || die "必须从 $APP_ROOT 运行，本次目录为 $(realpath "$PWD")"
-for command_name in node npm pm2 nginx curl; do need "$command_name"; done
+for command_name in node npm pm2 curl; do need "$command_name"; done
 [[ -f package.json && -f backend/package.json && -f frontend/package.json ]] || die '项目文件不完整'
 
 if [[ ! -f .env ]]; then
@@ -26,6 +26,7 @@ source .env
 set +a
 [[ "${PORT:-3201}" == '3201' ]] || die 'Rice后端端口必须为3201'
 [[ "${DATABASE_PATH:-}" == '/opt/rice/data/rice.sqlite' ]] || die 'DATABASE_PATH必须为/opt/rice/data/rice.sqlite'
+RICE_SKIP_NGINX="${RICE_SKIP_NGINX:-false}"
 
 if command -v ss >/dev/null 2>&1 && ss -ltnp | grep -q ':3201 ' && ! pm2 pid "$PROCESS_NAME" | grep -Eq '^[1-9][0-9]*$'; then
   die '3201端口已被非rice-backend进程占用'
@@ -42,6 +43,22 @@ node --env-file=/opt/rice/.env backend/src/db/init-cli.js
 log '启动或重载独立PM2进程 rice-backend'
 pm2 startOrReload ecosystem.config.cjs --only "$PROCESS_NAME"
 pm2 save
+
+if [[ "$RICE_SKIP_NGINX" == 'true' ]]; then
+  log '已跳过Nginx配置，Rice将通过 http://106.14.8.100:3201 直连访问'
+  for _ in {1..20}; do
+    if curl -fsS http://127.0.0.1:3201/ready >/dev/null; then
+      log '部署完成：/health与/ready正常'
+      curl -fsS http://127.0.0.1:3201/health
+      printf '\n'
+      exit 0
+    fi
+    sleep 1
+  done
+  pm2 logs "$PROCESS_NAME" --lines 80 --nostream || true
+  die 'rice-backend未在预期时间内就绪'
+fi
+need nginx
 
 RICE_DOMAIN="${RICE_DOMAIN:-rice.lansensecloud.cn}"
 RICE_SSL_CERT="${RICE_SSL_CERT:-}"
