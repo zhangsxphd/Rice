@@ -1,7 +1,7 @@
 function
   -- Rice W1/W2：UART2地址01张力计 + 地址02土壤四参数，顺序轮询避免总线冲突。
   -- 张力查询寄存器必须在现场烧录前按传感器说明书复核；当前值与样例帧010302FF3D3865一致。
-  local serviceUrl = "https://rice.lansensecloud.cn/api/device-ingest/d100l2"
+  local serviceUrl = "http://106.14.8.100/rice-api/device-ingest/d100l2"
   local apiKey = "REPLACE_WITH_RICE_API_KEY"
   local testMode = true
   local testIntervalSeconds = 10

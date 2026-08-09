@@ -52,6 +52,14 @@ pm2 startOrReload ecosystem.config.cjs --only "$PROCESS_NAME"
 pm2 save
 
 if [[ "$RICE_SKIP_NGINX" == 'true' ]]; then
+  if [[ -f "$NGINX_FILE" ]]; then
+    need nginx
+    need sudo
+    log '移除Rice旧Nginx配置，避免跳过模式遗留IP路由'
+    sudo rm -f -- "$NGINX_FILE"
+    sudo nginx -t
+    if command -v systemctl >/dev/null 2>&1; then sudo systemctl reload nginx; else sudo nginx -s reload; fi
+  fi
   log '已跳过Nginx配置，Rice将通过 http://106.14.8.100:3201 直连访问'
   for _ in {1..20}; do
     if curl -fsS http://127.0.0.1:3201/ready >/dev/null; then
@@ -72,18 +80,53 @@ sudo -n true || die '需要免交互sudo权限以安装Rice Nginx配置'
 RICE_DOMAIN="${RICE_DOMAIN:-rice.lansensecloud.cn}"
 RICE_SSL_CERT="${RICE_SSL_CERT:-}"
 RICE_SSL_CERT_KEY="${RICE_SSL_CERT_KEY:-}"
+LANSENSE_BACKEND_PORT="${LANSENSE_BACKEND_PORT:-3001}"
+RICE_PUBLIC_INGEST_PREFIX="${RICE_PUBLIC_INGEST_PREFIX:-/rice-api/device-ingest/}"
+LANSENSE_PUBLIC_INGEST_PREFIX="${LANSENSE_PUBLIC_INGEST_PREFIX:-/api/device-ingest/}"
 tmp_nginx="$(mktemp)"
 trap 'rm -f "$tmp_nginx"' EXIT
 
-locations='    client_max_body_size 16k;
-    location / {
+[[ "$RICE_PUBLIC_INGEST_PREFIX" == '/rice-api/device-ingest/' ]] || die 'RICE_PUBLIC_INGEST_PREFIX必须为/rice-api/device-ingest/'
+[[ "$LANSENSE_PUBLIC_INGEST_PREFIX" == '/api/device-ingest/' ]] || die 'LANSENSE_PUBLIC_INGEST_PREFIX必须为/api/device-ingest/'
+[[ "$LANSENSE_BACKEND_PORT" =~ ^[0-9]+$ ]] || die 'LANSENSE_BACKEND_PORT必须为数字端口'
+
+shared_ip_locations=''
+if [[ "$RICE_DOMAIN" =~ ^([0-9]{1,3}\.){3}[0-9]{1,3}$ ]]; then
+  curl -fsS "http://127.0.0.1:$LANSENSE_BACKEND_PORT/ready" >/dev/null \
+    || die "LanSense后端未就绪，拒绝安装共享IP网关，避免设备上报被Rice截断"
+  shared_ip_locations="    # 共享IP模式下，LanSense原有设备上报路径始终归LanSense后端所有。
+    location ^~ $LANSENSE_PUBLIC_INGEST_PREFIX {
+        proxy_pass http://127.0.0.1:$LANSENSE_BACKEND_PORT$LANSENSE_PUBLIC_INGEST_PREFIX;
+        proxy_http_version 1.1;
+        proxy_set_header Host \$host;
+        proxy_set_header X-Real-IP \$remote_addr;
+        proxy_set_header X-Forwarded-For \$remote_addr;
+        proxy_set_header X-Forwarded-Proto \$scheme;
+    }
+
+    # Rice设备必须使用独立前缀，nginx在转发时移除/rice-api前缀。
+    location ^~ $RICE_PUBLIC_INGEST_PREFIX {
+        proxy_pass http://127.0.0.1:3201/api/device-ingest/;
+        proxy_http_version 1.1;
+        proxy_set_header Host \$host;
+        proxy_set_header X-Real-IP \$remote_addr;
+        proxy_set_header X-Forwarded-For \$remote_addr;
+        proxy_set_header X-Forwarded-Proto \$scheme;
+    }
+
+"
+  log "共享IP隔离已启用：LanSense=$LANSENSE_PUBLIC_INGEST_PREFIX，Rice=$RICE_PUBLIC_INGEST_PREFIX"
+fi
+
+locations="    client_max_body_size 16k;
+$shared_ip_locations    location / {
         proxy_pass http://127.0.0.1:3201;
         proxy_http_version 1.1;
-        proxy_set_header Host $host;
-        proxy_set_header X-Real-IP $remote_addr;
-        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
-        proxy_set_header X-Forwarded-Proto $scheme;
-    }'
+        proxy_set_header Host \$host;
+        proxy_set_header X-Real-IP \$remote_addr;
+        proxy_set_header X-Forwarded-For \$proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto \$scheme;
+    }"
 
 if [[ -n "$RICE_SSL_CERT" && -n "$RICE_SSL_CERT_KEY" && -f "$RICE_SSL_CERT" && -f "$RICE_SSL_CERT_KEY" ]]; then
   {

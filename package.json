@@ -18,7 +18,8 @@
     "test:backend": "npm run test --workspace backend",
     "test:frontend": "npm run test --workspace frontend",
     "test:lua": "node scripts/validate-lua.mjs",
-    "test": "npm run test:backend && npm run test:frontend && npm run test:lua",
+    "test:deployment": "node --test scripts/deployment-isolation.test.mjs",
+    "test": "npm run test:backend && npm run test:frontend && npm run test:lua && npm run test:deployment",
     "db:init": "npm run db:init --workspace backend",
     "db:demo": "npm run db:demo --workspace backend",
     "export:analysis": "npm run export:analysis --workspace backend --"

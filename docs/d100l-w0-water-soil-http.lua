@@ -1,7 +1,7 @@
 function
   -- Rice W0：AII1 4–20mA水位 + UART2地址02土壤四参数。
   -- HTTP URL由D100L网络通道配置，serviceUrl仅用于现场核对，不调用未经验证的HTTP API。
-  local serviceUrl = "https://rice.lansensecloud.cn/api/device-ingest/d100l2"
+  local serviceUrl = "http://106.14.8.100/rice-api/device-ingest/d100l2"
   local apiKey = "REPLACE_WITH_RICE_API_KEY"
   local testMode = true
   local testIntervalSeconds = 10

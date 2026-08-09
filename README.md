@@ -94,7 +94,7 @@ npm run test:sites --workspace frontend
 设备上报地址：
 
 ```text
-POST https://rice.lansensecloud.cn/api/device-ingest/d100l2
+POST http://106.14.8.100/rice-api/device-ingest/d100l2
 ```
 
 Lua草案：
@@ -121,7 +121,7 @@ sudo bash scripts/deploy.sh
 - `/etc/nginx/conf.d/rice.conf`
 - `127.0.0.1:3201`
 
-不会停止、重载或修改LanSense的目录、进程、数据库和Nginx server块。详细说明见 `docs/deployment.md`。
+不会停止或修改LanSense的目录、进程、数据库和Nginx配置文件。共享IP模式会在Rice自己的server块中把LanSense原有 `/api/device-ingest/` 明确转发回3001，Rice设备只能使用 `/rice-api/device-ingest/`，避免两个项目争抢同一路径。详细说明见 `docs/deployment.md`。
 
 ## 备份和导出
 

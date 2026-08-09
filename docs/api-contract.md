@@ -3,7 +3,8 @@
 ## 接口
 
 ```text
-POST /api/device-ingest/d100l2
+生产共享IP入口：POST /rice-api/device-ingest/d100l2
+后端直连/独立域名入口：POST /api/device-ingest/d100l2
 Content-Type: application/json
 ```
 
