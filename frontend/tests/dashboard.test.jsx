@@ -18,6 +18,7 @@ function plots() {
     return {
       plotCode: `P${String(index).padStart(2, '0')}`,
       experimentCode: `B${blockIndex + 1}-${waterTreatment}-${varietyCode}`,
+      imei: `86232308993${String(700 + index).padStart(4, '0')}`,
       blockCode: `B${blockIndex + 1}`, waterTreatment, varietyCode, sensorMode,
       status: statuses[index % statuses.length], lastIngestAt: null,
       metrics: { waterLevelMm: sensorMode === 'water_soil' ? 30 : null, soilTensionKpa: sensorMode === 'tension_soil' ? -20 : null, soilMoisturePercent: 35, soilTemperatureC: 26, soilEcUsCm: 800, soilPh: 6.5 }
@@ -26,23 +27,34 @@ function plots() {
 }
 
 describe('实时监测页面组件', () => {
-  it('按4×6映射显示24个正式小区', () => {
+  it('按4×6映射显示24个正式小区和现场上下标记', () => {
     render(<PlotMatrix plots={plots()} selectedPlotCode="P01" onSelect={() => {}} />);
     expect(screen.getAllByRole('button')).toHaveLength(24);
-    expect(screen.getByText('B1-W0-V1')).toBeInTheDocument();
-    expect(screen.getByText('B4-W2-V2')).toBeInTheDocument();
-    expect(screen.getByText('P24')).toBeInTheDocument();
+    for (const marker of [
+      '1上：W2-V2', '1下：W2-V1', '2上：W0-V1', '2下：W0-V2', '3上：W1-V2', '3下：W1-V1',
+      '4上：W0-V1', '4下：W0-V2', '5上：W1-V2', '5下：W1-V1', '6上：W2-V1', '6下：W2-V2',
+      '7上：W1-V2', '7下：W1-V1', '8上：W2-V2', '8下：W2-V1', '9上：W0-V1', '9下：W0-V2',
+      '10上：W2-V1', '10下：W2-V2', '11上：W0-V2', '11下：W0-V1', '12上：W1-V1', '12下：W1-V2'
+    ]) expect(screen.getByText(marker)).toBeInTheDocument();
+    expect(screen.queryByText('P24')).not.toBeInTheDocument();
   });
 
   it('W0显示水位，W1/W2显示张力且状态样式不同', () => {
     render(<PlotMatrix plots={plots()} selectedPlotCode="P01" onSelect={() => {}} />);
-    const p01 = screen.getByText('P01').closest('button');
-    const p03 = screen.getByText('P03').closest('button');
+    const p01 = screen.getByText('2上：W0-V1').closest('button');
+    const p03 = screen.getByText('3下：W1-V1').closest('button');
     expect(p01).toHaveTextContent('水位');
     expect(p01).not.toHaveTextContent('张力');
     expect(p03).toHaveTextContent('张力');
     expect(document.querySelector('.state-missing')).toBeInTheDocument();
     expect(document.querySelector('.state-offline')).toBeInTheDocument();
+  });
+
+  it('在卡片中间只显示IMEI后四位', () => {
+    render(<PlotMatrix plots={plots()} selectedPlotCode="P01" onSelect={() => {}} />);
+    const p01 = screen.getByText('2上：W0-V1').closest('button');
+    expect(p01.querySelector('.plot-card-imei')).toHaveTextContent('0701');
+    expect(p01).not.toHaveTextContent('862323089930701');
   });
 
   it('无数据时显示空态且时间范围切换回调正确', () => {
