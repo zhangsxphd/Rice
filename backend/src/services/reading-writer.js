@@ -17,7 +17,7 @@ export function persistReading(database, { plot, device, reading }) {
     `).run(
       plot.id, device.id, device.imei, reading.collectedAt, reading.receivedAt, reading.timeSource,
       reading.timeDiscrepancySeconds, reading.schemaVersion, reading.taskVersion, reading.reportSequence,
-      plot.sensor_mode, reading.waterLevelMm, reading.soilTensionKpa, reading.soilMoisturePercent,
+      reading.sensorMode, reading.waterLevelMm, reading.soilTensionKpa, reading.soilMoisturePercent,
       reading.soilTemperatureC, reading.soilEcUsCm, reading.soilPh, reading.batteryMv, reading.csq,
       reading.waterStatus, reading.tensionStatus, reading.soilStatus, reading.cycleStatus,
       reading.payloadStatus, JSON.stringify(reading.payloadIssues), JSON.stringify(reading.rawJson), reading.receivedAt

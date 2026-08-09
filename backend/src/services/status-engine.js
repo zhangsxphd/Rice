@@ -5,6 +5,7 @@ function rangeViolation(value, range) {
 }
 
 export function evaluatePlotStatus(row, settings, now = Date.now()) {
+  const sensorProfile = row.sensor_profile || row.sensor_mode;
   if (!row.device_id) return { status: 'unbound', reasons: ['未绑定IMEI'] };
   const offlineTimeout = Number(settings.ingest?.offlineTimeoutSeconds || 900) * 1000;
   const lastIngest = row.last_ingest_at ? new Date(row.last_ingest_at).getTime() : NaN;
@@ -12,8 +13,8 @@ export function evaluatePlotStatus(row, settings, now = Date.now()) {
   if (!row.reading_id) return { status: 'missing', reasons: ['尚无有效读数'] };
 
   const missing = [];
-  if (row.sensor_mode === 'water_soil' && row.water_level_mm === null) missing.push('水位');
-  if (row.sensor_mode === 'tension_soil' && row.soil_tension_kpa === null) missing.push('张力');
+  if (sensorProfile === 'water_soil' && row.water_level_mm === null) missing.push('水位');
+  if (sensorProfile === 'tension_soil' && row.soil_tension_kpa === null) missing.push('张力');
   for (const [key, label] of [
     ['soil_moisture_percent', '含水率'], ['soil_temperature_c', '温度'], ['soil_ec_us_cm', 'EC'], ['soil_ph', 'pH']
   ]) if (row[key] === null) missing.push(label);
@@ -21,11 +22,13 @@ export function evaluatePlotStatus(row, settings, now = Date.now()) {
 
   const thresholds = settings.thresholds || {};
   const abnormal = [];
-  const primaryRange = row.sensor_mode === 'water_soil'
-    ? thresholds.waterLevelW0
-    : row.water_treatment === 'W1' ? thresholds.tensionW1 : thresholds.tensionW2;
-  const primaryValue = row.sensor_mode === 'water_soil' ? row.water_level_mm : row.soil_tension_kpa;
-  if (rangeViolation(primaryValue, primaryRange)) abnormal.push(row.sensor_mode === 'water_soil' ? '水位超阈值' : '张力超阈值');
+  if (sensorProfile !== 'soil_only') {
+    const primaryRange = sensorProfile === 'water_soil'
+      ? thresholds.waterLevelW0
+      : row.water_treatment === 'W1' ? thresholds.tensionW1 : thresholds.tensionW2;
+    const primaryValue = sensorProfile === 'water_soil' ? row.water_level_mm : row.soil_tension_kpa;
+    if (rangeViolation(primaryValue, primaryRange)) abnormal.push(sensorProfile === 'water_soil' ? '水位超阈值' : '张力超阈值');
+  }
   for (const [key, thresholdKey, label] of [
     ['soil_moisture_percent', 'soilMoisture', '含水率'],
     ['soil_temperature_c', 'soilTemperature', '温度'],

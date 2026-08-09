@@ -32,13 +32,20 @@ export function PlotCard({ plot, selected, onSelect }) {
   const metrics = plot.metrics || {};
   const fieldMarker = FIELD_MARKERS[plot.experimentCode] || plot.plotCode;
   const imeiSuffix = plot.imei?.slice(-4) || '----';
+  const soilOnly = plot.sensorMode === 'soil_only';
   const primaryLabel = plot.sensorMode === 'water_soil' ? '水位' : '张力';
   const primaryValue = plot.sensorMode === 'water_soil' ? waterCm(metrics.waterLevelMm) : value(metrics.soilTensionKpa, 1, ' kPa');
-  const rows = [
-    [primaryLabel, primaryValue, '水分', value(metrics.soilMoisturePercent, 1, '%')],
-    ['温度', value(metrics.soilTemperatureC, 1, '℃'), 'EC', value(ecMs(metrics.soilEcUsCm), 2)],
-    ['pH', value(metrics.soilPh, 2), '更新', relativeTime(plot.lastIngestAt)]
-  ];
+  const rows = soilOnly
+    ? [
+      ['水分', value(metrics.soilMoisturePercent, 1, '%'), '温度', value(metrics.soilTemperatureC, 1, '℃')],
+      ['EC', value(ecMs(metrics.soilEcUsCm), 2), 'pH', value(metrics.soilPh, 2)],
+      ['更新', relativeTime(plot.lastIngestAt), '', '']
+    ]
+    : [
+      [primaryLabel, primaryValue, '水分', value(metrics.soilMoisturePercent, 1, '%')],
+      ['温度', value(metrics.soilTemperatureC, 1, '℃'), 'EC', value(ecMs(metrics.soilEcUsCm), 2)],
+      ['pH', value(metrics.soilPh, 2), '更新', relativeTime(plot.lastIngestAt)]
+    ];
   return (
     <button
       type="button"

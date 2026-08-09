@@ -124,6 +124,25 @@ const MIGRATIONS = [
         created_at TEXT NOT NULL
       );
     `
+  },
+  {
+    id: 2,
+    sql: `
+      ALTER TABLE plots ADD COLUMN sensor_profile TEXT NOT NULL DEFAULT 'water_soil';
+
+      UPDATE plots
+      SET sensor_profile = CASE sensor_mode
+        WHEN 'water_soil' THEN 'water_soil'
+        ELSE 'tension_soil'
+      END;
+
+      UPDATE plots
+      SET sensor_profile = 'soil_only'
+      WHERE plot_code IN (
+        'P01', 'P02', 'P03', 'P04', 'P05', 'P06', 'P07', 'P08',
+        'P13', 'P14', 'P19', 'P20', 'P21', 'P22', 'P24'
+      );
+    `
   }
 ];
 

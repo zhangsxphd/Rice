@@ -21,7 +21,7 @@ function selectRows(database, query, plotCode) {
   const filter = exportQuery(query, plotCode);
   return database.prepare(`
     SELECT p.plot_code, p.experiment_code, p.block_code, p.water_treatment, p.variety_code,
-      p.sensor_mode, r.imei, r.collected_at, r.received_at, r.water_level_mm, r.soil_tension_kpa,
+      COALESCE(p.sensor_profile, p.sensor_mode) AS sensor_mode, r.imei, r.collected_at, r.received_at, r.water_level_mm, r.soil_tension_kpa,
       r.soil_moisture_percent, r.soil_temperature_c, r.soil_ec_us_cm, r.soil_ph, r.battery_mv,
       r.csq, r.water_status, r.tension_status, r.soil_status, r.cycle_status, r.payload_status, r.raw_json
     FROM readings r JOIN plots p ON p.id = r.plot_id ${filter.where} ORDER BY r.collected_at

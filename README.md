@@ -6,8 +6,8 @@
 
 主看板采用4×6矩阵：行是B1–B4区组，列依次为W0-V1、W0-V2、W1-V1、W1-V2、W2-V1、W2-V2。
 
-- W0：AII1水位计＋UART2土壤温湿度/EC/pH四参数探头。
-- W1/W2：UART2地址01张力计＋地址02土壤四参数探头。
+- 已布设的9个小区：UART2张力计＋土壤温湿度/EC/pH四参数探头。
+- 其余15个小区：仅布设UART2土壤温湿度/EC/pH四参数探头，不要求水位或张力。
 - 数据库保存水位mm、张力kPa、EC μS/cm、电池mV和CSQ；页面只在显示层换算cm、mS/cm和V。
 
 ## 本地开发
@@ -101,6 +101,7 @@ Lua草案：
 
 - `docs/d100l-w0-water-soil-http.lua`
 - `docs/d100l-w1-w2-tension-soil-http.lua`
+- `docs/d100l-soil-only-http.lua`
 
 张力计脚本中的起始寄存器必须在现场烧录前按设备说明书复核；当前草案按提示词样例帧解析有符号16位并除以10。
 

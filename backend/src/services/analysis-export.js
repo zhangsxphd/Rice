@@ -116,7 +116,7 @@ function exportPlots(database) {
 export function selectAnalysisRows(database) {
   return database.prepare(`
     SELECT r.id, r.plot_id, r.device_id, p.plot_code, p.experiment_code, p.block_code,
-      p.water_treatment, p.variety_code, p.display_order, p.sensor_mode, r.imei,
+      p.water_treatment, p.variety_code, p.display_order, COALESCE(p.sensor_profile, p.sensor_mode) AS sensor_mode, r.imei,
       r.collected_at, r.received_at, r.time_source, r.time_discrepancy_seconds,
       r.schema_version, r.task_version, r.report_sequence, r.water_level_mm, r.soil_tension_kpa,
       r.soil_moisture_percent, r.soil_temperature_c, r.soil_ec_us_cm, r.soil_ph,
@@ -309,8 +309,8 @@ function populateDesign(workbook, plots) {
   const sheet = workbook.sheet('01_试验设计');
   const data = plots.map((plot) => [
     plot.plot_code, plot.experiment_code, plot.block_code, plot.water_treatment, plot.variety_code,
-    plot.sensor_mode,
-    plot.sensor_mode === 'water_soil' ? '水位、含水率、温度、EC、pH' : '张力、含水率、温度、EC、pH'
+    plot.sensor_profile || plot.sensor_mode,
+    (plot.sensor_profile || plot.sensor_mode) === 'water_soil' ? '水位、含水率、温度、EC、pH' : (plot.sensor_profile || plot.sensor_mode) === 'tension_soil' ? '张力、含水率、温度、EC、pH' : '含水率、温度、EC、pH'
   ]);
   const endRow = clearAndWrite(sheet, { startRow: 4, templateLastRow: TEMPLATE_LAST_ROWS.design, columnCount: 7, rows: data });
   styleBody(sheet, 4, endRow, 7);
@@ -324,7 +324,7 @@ function populateDesign(workbook, plots) {
 function populateBindings(workbook, plots) {
   const sheet = workbook.sheet('02_设备绑定');
   const data = plots.map((plot) => [
-    plot.plot_code, plot.experiment_code, textIdentifier(plot.imei), plot.sensor_mode,
+    plot.plot_code, plot.experiment_code, textIdentifier(plot.imei), plot.sensor_profile || plot.sensor_mode,
     shanghaiExcelSerial(plot.first_collected_at), shanghaiExcelSerial(plot.last_collected_at),
     Number(plot.reading_count), plot.imei ? (plot.device_enabled ? '正常' : '已停用') : '未绑定'
   ]);

@@ -1,6 +1,6 @@
 function listDevices(database) {
   return database.prepare(`
-    SELECT d.*, b.id AS binding_id, p.plot_code, p.experiment_code, p.sensor_mode,
+    SELECT d.*, b.id AS binding_id, p.plot_code, p.experiment_code, p.sensor_mode, p.sensor_profile,
       lr.collected_at AS latest_collected_at, r.battery_mv, r.csq
     FROM devices d
     LEFT JOIN plot_bindings b ON b.device_id = d.id AND b.active = 1
@@ -11,7 +11,7 @@ function listDevices(database) {
   `).all().map((row) => ({
     id: row.id, imei: row.imei, alias: row.alias, enabled: Boolean(row.enabled),
     expectedIntervalSeconds: row.expected_interval_seconds, remark: row.remark,
-    plotCode: row.plot_code, experimentCode: row.experiment_code, sensorMode: row.sensor_mode,
+    plotCode: row.plot_code, experimentCode: row.experiment_code, sensorMode: row.sensor_profile || row.sensor_mode,
     lastIngestAt: row.last_ingest_at, lastIngestResult: row.last_ingest_result,
     batteryMv: row.battery_mv, csq: row.csq
   }));

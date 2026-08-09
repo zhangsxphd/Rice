@@ -31,7 +31,7 @@ export function presentPlot(row, settings, now) {
     blockCode: row.block_code,
     waterTreatment: row.water_treatment,
     varietyCode: row.variety_code,
-    sensorMode: row.sensor_mode,
+    sensorMode: row.sensor_profile || row.sensor_mode,
     displayOrder: row.display_order,
     imei: row.imei || null,
     deviceAlias: row.device_alias || null,
@@ -94,7 +94,7 @@ export function dashboardRoutes(app, options) {
     const range = ['1h', '6h', '24h', '7d', 'all'].includes(request.query?.range) ? request.query.range : '24h';
     const start = rangeStart(range);
     const rows = database.prepare(`
-      SELECT r.collected_at, p.sensor_mode, r.water_level_mm, r.soil_tension_kpa,
+      SELECT r.collected_at, COALESCE(p.sensor_profile, p.sensor_mode) AS sensor_mode, r.water_level_mm, r.soil_tension_kpa,
         r.soil_moisture_percent, r.soil_temperature_c, r.soil_ec_us_cm, r.soil_ph
       FROM readings r JOIN plots p ON p.id = r.plot_id
       ${start ? 'WHERE r.collected_at >= ?' : ''}

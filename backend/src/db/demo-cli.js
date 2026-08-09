@@ -36,13 +36,14 @@ for (const plotSeed of PLOT_SEED) {
   for (let point = 48; point >= 0; point -= 1) {
     const timestamp = Math.floor((now - point * 300_000) / 1000);
     const wave = Math.sin((point + plot.display_order) / 4);
+    const sensorProfile = plot.sensor_profile || plot.sensor_mode;
     const payload = {
       schema_version: 1,
       imei,
       timestamp,
       report_sequence: 49 - point,
-      task_version: plot.sensor_mode === 'water_soil' ? 'rice_w0_water_soil_demo' : 'rice_tension_soil_demo',
-      sensor_mode: plot.sensor_mode,
+      task_version: sensorProfile === 'soil_only' ? 'rice_soil_only_demo' : sensorProfile === 'water_soil' ? 'rice_w0_water_soil_demo' : 'rice_tension_soil_demo',
+      sensor_mode: sensorProfile,
       soil_moisture_percent: Number((34 + (plot.display_order % 8) + wave * 2).toFixed(1)),
       soil_temperature_c: Number((25.1 + wave * 0.5).toFixed(1)),
       soil_ec_us_cm: Math.round(780 + plot.display_order * 12 + wave * 35),
@@ -52,10 +53,10 @@ for (const plotSeed of PLOT_SEED) {
       soil_rs485_status: plot.plot_code === 'P03' && point === 0 ? 'crc_error' : 'ok',
       cycle_status: plot.plot_code === 'P03' && point === 0 ? 'partial' : 'ok'
     };
-    if (plot.sensor_mode === 'water_soil') {
+    if (sensorProfile === 'water_soil') {
       payload.water_level_mm = Number((28 + (plot.display_order % 4) * 3 + wave * 5).toFixed(1));
       payload.water_4_20ma_status = 'ok';
-    } else if (!(plot.plot_code === 'P11' && point === 0)) {
+    } else if (sensorProfile === 'tension_soil' && !(plot.plot_code === 'P11' && point === 0)) {
       payload.soil_tension_kpa = Number((-16 - (plot.water_treatment === 'W2' ? 18 : 7) - (plot.display_order % 5) - wave * 2).toFixed(1));
       payload.soil_tension_rs485_status = 'ok';
     }

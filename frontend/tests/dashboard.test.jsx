@@ -50,6 +50,15 @@ describe('实时监测页面组件', () => {
     expect(document.querySelector('.state-offline')).toBeInTheDocument();
   });
 
+  it('仅土壤四参数小区不显示水位或张力', () => {
+    const soilOnly = { ...plots()[0], sensorMode: 'soil_only', metrics: { waterLevelMm: null, soilTensionKpa: null, soilMoisturePercent: 35, soilTemperatureC: 26, soilEcUsCm: 800, soilPh: 6.5 } };
+    render(<PlotMatrix plots={[soilOnly]} selectedPlotCode="P01" onSelect={() => {}} />);
+    const card = screen.getByText('2上：W0-V1').closest('button');
+    expect(card).toHaveTextContent('水分');
+    expect(card).not.toHaveTextContent('水位');
+    expect(card).not.toHaveTextContent('张力');
+  });
+
   it('在卡片中间只显示IMEI后四位', () => {
     render(<PlotMatrix plots={plots()} selectedPlotCode="P01" onSelect={() => {}} />);
     const p01 = screen.getByText('2上：W0-V1').closest('button');
@@ -79,5 +88,13 @@ describe('实时监测页面组件', () => {
     expect(screen.getByText('左右滑动查看全部指标')).toBeInTheDocument();
     expect(document.querySelector('.table-scroll')).toContainElement(document.querySelector('.latest-readings-table'));
     expect(document.querySelector('.latest-readings-table')).toHaveTextContent('水位 (cm)');
+  });
+
+  it('仅土壤四参数最新表不保留空的主指标列', () => {
+    const soilOnly = { ...plots()[0], sensorMode: 'soil_only' };
+    render(<LatestReadingsTable plot={soilOnly} rows={[]} />);
+    expect(document.querySelector('.latest-readings-table')).toHaveTextContent('含水率 (%)');
+    expect(document.querySelector('.latest-readings-table')).not.toHaveTextContent('水位 (cm)');
+    expect(document.querySelector('.latest-readings-table')).not.toHaveTextContent('张力 (kPa)');
   });
 });

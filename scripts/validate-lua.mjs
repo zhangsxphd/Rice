@@ -6,7 +6,8 @@ import luaparse from 'luaparse';
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const files = [
   'docs/d100l-w0-water-soil-http.lua',
-  'docs/d100l-w1-w2-tension-soil-http.lua'
+  'docs/d100l-w1-w2-tension-soil-http.lua',
+  'docs/d100l-soil-only-http.lua'
 ];
 
 for (const relativePath of files) {

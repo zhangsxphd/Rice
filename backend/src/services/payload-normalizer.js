@@ -27,6 +27,7 @@ function soilSource(payload) {
 
 export function normalizePayload(payload, plot, receivedAt = new Date()) {
   const soil = soilSource(payload);
+  const sensorProfile = plot.sensor_profile || plot.sensor_mode;
   let batteryMv = number(payload, ['battery_mv', 'battery', 'vbat']);
   if (batteryMv !== null && batteryMv <= 100) batteryMv *= 1000;
   if (batteryMv !== null) batteryMv = Math.round(batteryMv);
@@ -36,7 +37,7 @@ export function normalizePayload(payload, plot, receivedAt = new Date()) {
     schemaVersion: number(payload, ['schema_version']),
     taskVersion: first(payload, ['task_version']) ? String(first(payload, ['task_version'])).slice(0, 100) : null,
     reportSequence: number(payload, ['report_sequence']),
-    sensorMode: plot.sensor_mode,
+    sensorMode: sensorProfile,
     waterLevelMm: number(payload, ['water_level_mm', 'level']),
     soilTensionKpa: number(payload, ['soil_tension_kpa', 'tension']),
     soilMoisturePercent: number(soil, ['soil_moisture_percent', 'moisture_percent', 'moisture']),
@@ -53,12 +54,12 @@ export function normalizePayload(payload, plot, receivedAt = new Date()) {
   };
 
   const issues = [];
-  const expected = plot.sensor_mode === 'water_soil' ? 'waterLevelMm' : 'soilTensionKpa';
-  const expectedStatus = plot.sensor_mode === 'water_soil' ? reading.waterStatus : reading.tensionStatus;
-  if (plot.sensor_mode === 'water_soil' && reading.soilTensionKpa !== null) issues.push('unexpected_field:soil_tension_kpa');
-  if (plot.sensor_mode === 'tension_soil' && reading.waterLevelMm !== null) issues.push('unexpected_field:water_level_mm');
-  if (reading[expected] === null) issues.push(`missing:${plot.sensor_mode === 'water_soil' ? 'water_level_mm' : 'soil_tension_kpa'}`);
-  if (expectedStatus === 'ok' && reading[expected] === null) issues.push('inconsistent:primary_status_ok_but_value_missing');
+  const expected = sensorProfile === 'water_soil' ? 'waterLevelMm' : sensorProfile === 'tension_soil' ? 'soilTensionKpa' : null;
+  const expectedStatus = sensorProfile === 'water_soil' ? reading.waterStatus : sensorProfile === 'tension_soil' ? reading.tensionStatus : null;
+  if (sensorProfile === 'water_soil' && reading.soilTensionKpa !== null) issues.push('unexpected_field:soil_tension_kpa');
+  if (sensorProfile === 'tension_soil' && reading.waterLevelMm !== null) issues.push('unexpected_field:water_level_mm');
+  if (expected && reading[expected] === null) issues.push(`missing:${sensorProfile === 'water_soil' ? 'water_level_mm' : 'soil_tension_kpa'}`);
+  if (expectedStatus === 'ok' && expected && reading[expected] === null) issues.push('inconsistent:primary_status_ok_but_value_missing');
   for (const [field, value] of [
     ['soil_moisture_percent', reading.soilMoisturePercent],
     ['soil_temperature_c', reading.soilTemperatureC],

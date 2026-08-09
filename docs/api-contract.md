@@ -60,6 +60,29 @@ API Key读取优先级：`X-API-Key`请求头、`?api_key=`、JSON中的`apiKey`
 }
 ```
 
+## 仅土壤四参数示例
+
+仅布设土壤四参数探头的小区使用 `soil_only`。此模式只要求含水率、温度、EC、pH，不能上报水位或张力作为正式指标。
+
+```json
+{
+  "schema_version": 1,
+  "apiKey": "REPLACE_ME",
+  "imei": "862323089930701",
+  "timestamp": 1785948020,
+  "task_version": "rice_soil_only_v1",
+  "sensor_mode": "soil_only",
+  "soil_moisture_percent": 43.2,
+  "soil_temperature_c": 27.1,
+  "soil_ec_us_cm": 816,
+  "soil_ph": 6.52,
+  "soil_rs485_status": "ok",
+  "battery_mv": 3998,
+  "csq": 21,
+  "cycle_status": "ok"
+}
+```
+
 时间戳同时支持秒和毫秒。没有合法设备时间时使用服务器接收时间并设置 `time_source=server_fallback`。重复的 `(device_id, collected_at)` 返回200，`inserted=false`、`duplicated=true`。
 
 ## 错误码
@@ -70,4 +93,4 @@ API Key读取优先级：`X-API-Key`请求头、`?api_key=`、JSON中的`apiKey`
 - `404 DEVICE_NOT_REGISTERED`：未知IMEI。
 - `404 DEVICE_NOT_BOUND`：IMEI已登记但没有活动小区绑定。
 
-服务端始终以小区的 `sensor_mode` 为准。W0中的张力或W1/W2中的水位只进入脱敏审计JSON，并记录为unexpected field，不进入正式指标。
+服务端始终以小区的监测模式为准。`soil_only` 仅校验四项土壤指标；水位或张力不会作为该小区的正式指标。

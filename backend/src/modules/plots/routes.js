@@ -45,7 +45,7 @@ export function plotsRoutes(app, { database }) {
       .all(plot.id, ...(start ? [start] : []));
     const stride = Math.max(1, Math.ceil(rows.length / 1800));
     const sampled = stride === 1 ? rows : rows.filter((_, index) => index % stride === 0 || index === rows.length - 1);
-    return { success: true, data: { plotCode: plot.plot_code, sensorMode: plot.sensor_mode, range, sampled: stride > 1, total: rows.length, points: sampled.map(presentReading) } };
+    return { success: true, data: { plotCode: plot.plot_code, sensorMode: plot.sensor_profile || plot.sensor_mode, range, sampled: stride > 1, total: rows.length, points: sampled.map(presentReading) } };
   });
 
   app.get('/:plotCode/recent', async (request, reply) => {
@@ -53,6 +53,6 @@ export function plotsRoutes(app, { database }) {
     if (!plot) return reply.code(404).send({ success: false, error: { code: 'PLOT_NOT_FOUND', message: '小区不存在' } });
     const limit = Math.min(100, Math.max(1, Number(request.query?.limit) || 10));
     const rows = database.prepare('SELECT * FROM readings WHERE plot_id = ? ORDER BY collected_at DESC LIMIT ?').all(plot.id, limit);
-    return { success: true, data: { plotCode: plot.plot_code, sensorMode: plot.sensor_mode, rows: rows.map(presentReading) } };
+    return { success: true, data: { plotCode: plot.plot_code, sensorMode: plot.sensor_profile || plot.sensor_mode, rows: rows.map(presentReading) } };
   });
 }
