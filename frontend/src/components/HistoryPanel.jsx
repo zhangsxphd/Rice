@@ -49,7 +49,7 @@ export function HistoryPanel({ plot, points, range, onRange }) {
           ? <ChartCard title="土壤含水率" unit="%" empty={empty} option={chartOption(points, [{ name: '含水率', key: 'soilMoisturePercent', color: COLORS.moisture }])} />
           : <ChartCard title={`${primary.name}与含水率`} unit={plot?.sensorMode === 'water_soil' ? 'cm / %' : 'kPa / %'} empty={empty} option={chartOption(points, [primary, { name: '含水率', key: 'soilMoisturePercent', color: COLORS.moisture, yAxisIndex: 1 }], [{ type: 'value', scale: true }, { type: 'value', scale: true }])} />}
         <ChartCard title="土壤温度" unit="℃" empty={empty} option={chartOption(points, [{ name: '温度', key: 'soilTemperatureC', color: COLORS.temperature }])} />
-        <ChartCard title="土壤EC" unit="mS/cm" empty={empty} option={chartOption(points, [{ name: 'EC', key: 'soilEcUsCm', color: COLORS.ec, transform: (v) => v === null ? null : Number((v / 1000).toFixed(3)) }])} />
+        <ChartCard title="土壤EC" unit="μS/cm" empty={empty} option={chartOption(points, [{ name: 'EC', key: 'soilEcUsCm', color: COLORS.ec }])} />
         <ChartCard title="土壤pH" unit="" empty={empty} option={chartOption(points, [{ name: 'pH', key: 'soilPh', color: COLORS.ph }])} />
       </div>
     </section>

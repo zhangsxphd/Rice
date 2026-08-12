@@ -1,5 +1,5 @@
 import { StatusBadge } from './StatusBadge.jsx';
-import { ecMs, relativeTime, value, waterCm } from '../utils/format.js';
+import { relativeTime, value, waterCm } from '../utils/format.js';
 
 const FIELD_MARKERS = {
   'B1-W2-V2': '1上：W2-V2',
@@ -38,12 +38,12 @@ export function PlotCard({ plot, selected, onSelect }) {
   const rows = soilOnly
     ? [
       ['水分', value(metrics.soilMoisturePercent, 1, '%'), '温度', value(metrics.soilTemperatureC, 1, '℃')],
-      ['EC', value(ecMs(metrics.soilEcUsCm), 2), 'pH', value(metrics.soilPh, 2)],
+      ['EC', value(metrics.soilEcUsCm, 0), 'pH', value(metrics.soilPh, 2)],
       ['更新', relativeTime(plot.lastIngestAt), '', '']
     ]
     : [
       [primaryLabel, primaryValue, '水分', value(metrics.soilMoisturePercent, 1, '%')],
-      ['温度', value(metrics.soilTemperatureC, 1, '℃'), 'EC', value(ecMs(metrics.soilEcUsCm), 2)],
+      ['温度', value(metrics.soilTemperatureC, 1, '℃'), 'EC', value(metrics.soilEcUsCm, 0)],
       ['pH', value(metrics.soilPh, 2), '更新', relativeTime(plot.lastIngestAt)]
     ];
   return (

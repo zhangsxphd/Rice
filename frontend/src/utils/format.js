@@ -10,10 +10,6 @@ export function waterCm(mm) {
   return isNumericValue(mm) ? `${(Number(mm) / 10).toFixed(1)} cm` : '—';
 }
 
-export function ecMs(us) {
-  return isNumericValue(us) ? `${(Number(us) / 1000).toFixed(2)}` : '—';
-}
-
 export function batteryV(mv) {
   return isNumericValue(mv) ? `${(Number(mv) / 1000).toFixed(2)} V` : '—';
 }

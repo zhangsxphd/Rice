@@ -46,7 +46,7 @@ export function DashboardPage() {
     { icon: Gauge, title: 'W1/W2 土壤张力', unit: '(kPa)', summary: overview.summary.soilTension, dataKey: 'soilTensionKpa', color: '#0e9f6e' },
     { icon: Drop, title: '土壤含水率', unit: '(%)', summary: overview.summary.soilMoisture, dataKey: 'soilMoisturePercent', color: '#1769ff' },
     { icon: ThermometerHot, title: '土壤温度', unit: '(℃)', summary: overview.summary.soilTemperature, dataKey: 'soilTemperatureC', color: '#ff6814' },
-    { icon: Lightning, title: '土壤EC', unit: '(mS/cm)', summary: overview.summary.soilEc, dataKey: 'soilEcUsCm', color: '#8c43e9', transform: (value) => value / 1000, digits: 2 },
+    { icon: Lightning, title: '土壤EC', unit: '(μS/cm)', summary: overview.summary.soilEc, dataKey: 'soilEcUsCm', color: '#8c43e9', digits: 0 },
     { icon: Flask, title: '土壤pH', unit: '', summary: overview.summary.soilPh, dataKey: 'soilPh', color: '#0aaa72', digits: 2 }
   ].filter((card) => card.summary.count > 0) : [];
 

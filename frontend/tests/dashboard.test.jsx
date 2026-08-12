@@ -88,6 +88,18 @@ describe('实时监测页面组件', () => {
     expect(screen.getByText('左右滑动查看全部指标')).toBeInTheDocument();
     expect(document.querySelector('.table-scroll')).toContainElement(document.querySelector('.latest-readings-table'));
     expect(document.querySelector('.latest-readings-table')).toHaveTextContent('水位 (cm)');
+    expect(document.querySelector('.latest-readings-table')).toHaveTextContent('EC (μS/cm)');
+  });
+
+  it('EC直接按μS/cm显示，不再缩小1000倍', () => {
+    const row = {
+      id: 1, collectedAt: '2026-08-12T00:00:00.000Z', waterLevelMm: 30,
+      soilMoisturePercent: 35, soilTemperatureC: 26, soilEcUsCm: 800,
+      soilPh: 6.5, batteryMv: 3700, csq: 20, payloadStatus: 'normal'
+    };
+    render(<LatestReadingsTable plot={plots()[0]} rows={[row]} />);
+    expect(document.querySelector('.latest-readings-table')).toHaveTextContent('800');
+    expect(document.querySelector('.latest-readings-table')).not.toHaveTextContent('0.80');
   });
 
   it('仅土壤四参数最新表不保留空的主指标列', () => {
